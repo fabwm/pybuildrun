@@ -1,6 +1,6 @@
 #!/bin/bash
 REPO_GIT=$1
-
+PYBUILDRUN_HOME=$(pwd)
 
 function check_dir()
 {
@@ -9,7 +9,7 @@ function check_dir()
         if [ -d $1 ]; then
             cd $1 && git log 2> /dev/null 1> /dev/null
             if [ $? != 0 ]; then
-                echo "Not a git repository - please input a git repo dir as a arg  - $(date)"  >> log.txt
+                echo "Not a git repository - please input a git repo dir as a arg  - $(date)"  >> $PYBUILDRUN_HOME/log.txt 
                 exit 1
             else
                 get_commit_logs $1
@@ -20,7 +20,7 @@ function check_dir()
     
     else
     
-        echo "no args - $(date)" >> log.txt
+        echo "no args on script call - $(date)" >> log.txt
     
     fi
 }

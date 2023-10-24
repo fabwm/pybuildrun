@@ -6,6 +6,9 @@ import json
 
 def monitor_commit():
 
+    json_pipeline = get_json_pipeline()
+    validate_pipeline(json_pipeline)
+
     try:
         git_repo = sys.argv[1]
     except:
@@ -17,19 +20,26 @@ def monitor_commit():
         get_error = commit_file.split()[-1]
     
     if get_error == '1':
-        print(f"{commit_file}^exit code")
+        print(f"{commit_file}^exit code\ncheck log file to see the error...")
     else:
         while True:
-            count_loop = 0
-            last_commit_file = os.popen(f"./get_git_hooks.sh {git_repo}").read()
+            #count_loop = 0
+            last_commit_file = os.popen(f"./get_git_hooks.sh {git_repo}; echo $?").read()
             if last_commit_file == commit_file:
+                # print("commits iguais")
+                # time.sleep(2)
                 pass
             else:
-                if count_loop == 0:
+                # print(last_commit_file)
+                # print("diferente")
+                pipeline_run_status = run_pipeline(json_pipeline)
+                commit_file = last_commit_file
+                #print(pipeline_run_status)
+                if pipeline_run_status == None:
+                    print("pipeline error, one or more commands within key 'run:{}' are not working")
+                    exit()
+                else:
                     pass
-                else:   
-                    print("diferente")
-                count_loop += 1 
 
 def get_json_pipeline():
     
@@ -47,35 +57,33 @@ def validate_pipeline(json_pipeline):
             if "run" in json_pipeline[x]:
                 for y in json_pipeline[x]:
                     if y == "run":
-                        return True
+                        pass
                     else:
                         print("invalid key value in pipeline, please erase all keys in pipeline that is not 'run'")
-                        return False
+                        break
             else:
                 print("No run key in pipeline, please input the run key and its steps")
-                return False
+                break
         else:
             print("invalid pipeline sintax, please describe trigger and pipeline only")
-            return False
+            break
 
 def run_pipeline(pipeline):
 
     commands = pipeline["pipeline"]["run"]
     for key in commands:
     
-        step_run = os.popen(f"{commands[key]} 2> /dev/null; echo $?").read()
+        step_run = os.popen(f"{commands[key]} 2> log.txt; echo $?").read()
         step_error = step_run.split()[-1]
         
         if step_error != "0":
-            print(f"command {commands[key]} error with exit {step_error}")
+            print(f"command {commands[key]} error with exit {step_error}\ncheck logfile to see the error")
             os.popen(f'echo "command {commands[key]} error with exit {step_error} - $(date)" >> log.txt')
             break
+            return False
         else:
+            return True
             pass
 
-#monitor_commit()
 if __name__ == '__main__':
-    pipeline = get_json_pipeline()
-    validate = validate_pipeline(pipeline)
-    if validate == True:
-        run_pipeline(pipeline)
+    monitor_commit()

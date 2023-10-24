@@ -4,6 +4,13 @@ import time
 import json
 
 
+script_init = "██████╗░██╗░░░██╗██████╗░██╗░░░██╗██╗██╗░░░░░██████╗░██████╗░██╗░░░██╗███╗░░██╗\n\
+██╔══██╗╚██╗░██╔╝██╔══██╗██║░░░██║██║██║░░░░░██╔══██╗██╔══██╗██║░░░██║████╗░██║\n\
+██████╔╝░╚████╔╝░██████╦╝██║░░░██║██║██║░░░░░██║░░██║██████╔╝██║░░░██║██╔██╗██║\n\
+██╔═══╝░░░╚██╔╝░░██╔══██╗██║░░░██║██║██║░░░░░██║░░██║██╔══██╗██║░░░██║██║╚████║\n\
+██║░░░░░░░░██║░░░██████╦╝╚██████╔╝██║███████╗██████╔╝██║░░██║╚██████╔╝██║░╚███║"
+
+
 def monitor_commit():
 
     json_pipeline = get_json_pipeline()
@@ -22,24 +29,37 @@ def monitor_commit():
     if get_error == '1':
         print(f"{commit_file}^exit code\ncheck log file to see the error...")
     else:
+        print("*******************************************************************************\n\n")
+        print(script_init)
+        print("\n\n*******************************************************************************")
+        print("\n\nStarting pybuildrun....\nsearching for commits\n\n")
         while True:
-            #count_loop = 0
+            
             last_commit_file = os.popen(f"./get_git_hooks.sh {git_repo}; echo $?").read()
             if last_commit_file == commit_file:
-                # print("commits iguais")
-                # time.sleep(2)
                 pass
             else:
-                # print(last_commit_file)
-                # print("diferente")
+                print("commit received...\nstarting pipeline...")
                 pipeline_run_status = run_pipeline(json_pipeline)
                 commit_file = last_commit_file
-                #print(pipeline_run_status)
-                if pipeline_run_status == None:
+                if pipeline_run_status == False:
                     print("pipeline error, one or more commands within key 'run:{}' are not working")
                     exit()
                 else:
-                    pass
+                    print("pipeline succesfull run")
+                    var_for_validation_inloop = 0
+                    user_decision_to_continue_run_pipeline = input("Would you like to continue listening to git commits? (y/n)\n")
+                    while(var_for_validation_inloop == 0):
+                        if user_decision_to_continue_run_pipeline == 'y':
+                            var_for_validation_inloop = 1
+                            print("\nrestarting pybuildrun...\nsearching for commits\n")
+                            pass
+                        elif user_decision_to_continue_run_pipeline == 'n':
+                            print("exiting pybuildrun...")
+                            exit()
+                        else:
+                            print("not readable answer, please input 'y' or 'n' to continue pybuildrun.\n")
+                            pass
 
 def get_json_pipeline():
     
@@ -73,17 +93,18 @@ def run_pipeline(pipeline):
     commands = pipeline["pipeline"]["run"]
     for key in commands:
     
-        step_run = os.popen(f"{commands[key]} 2> log.txt; echo $?").read()
+        step_run = os.popen(f"{commands[key]} 2>> log.txt; echo $?").read()
         step_error = step_run.split()[-1]
         
         if step_error != "0":
             print(f"command {commands[key]} error with exit {step_error}\ncheck logfile to see the error")
-            os.popen(f'echo "command {commands[key]} error with exit {step_error} - $(date)" >> log.txt')
-            break
+            os.popen(f'echo $(date)" >> log.txt')
             return False
+            break
         else:
-            return True
             pass
+    
+    return True
 
 if __name__ == '__main__':
     monitor_commit()

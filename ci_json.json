@@ -1,0 +1,10 @@
+{
+    "trigger": "git",
+    "pipeline": {
+        "run":{
+            "step": "./test.sh",
+            "step2": "./test2.sh",
+            "step3": "./test3.sh"
+        }
+    }
+}

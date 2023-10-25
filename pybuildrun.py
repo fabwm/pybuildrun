@@ -11,10 +11,11 @@ script_init = "██████╗░██╗░░░██╗████�
 ██║░░░░░░░░██║░░░██████╦╝╚██████╔╝██║███████╗██████╔╝██║░░██║╚██████╔╝██║░╚███║"
 
 
-def monitor_commit():
+def git_trigger(json_pipeline):
 
-    json_pipeline = get_json_pipeline()
-    validate_pipeline(json_pipeline)
+    #json_pipeline = get_json_pipeline()
+    #validate_pipeline(json_pipeline)
+
 
     try:
         git_repo = sys.argv[1]
@@ -80,13 +81,15 @@ def validate_pipeline(json_pipeline):
                         pass
                     else:
                         print("invalid key value in pipeline, please erase all keys in pipeline that is not 'run'")
-                        break
+                        exit()
             else:
                 print("No run key in pipeline, please input the run key and its steps")
-                break
+                exit()
         else:
             print("invalid pipeline sintax, please describe trigger and pipeline only")
-            break
+            exit()
+    
+    return json_pipeline
 
 def run_pipeline(pipeline):
 
@@ -106,5 +109,37 @@ def run_pipeline(pipeline):
     
     return True
 
+def get_trigger():
+    
+    json_pipeline = get_json_pipeline()
+    pipeline = validate_pipeline(json_pipeline)
+
+    trigger = pipeline["trigger"]
+
+    return trigger, pipeline
+
+def manual_pipeline(pipeline):
+    
+    print("*******************************************************************************\n\n")
+    print(script_init)
+    print("\n\n*******************************************************************************")
+    print("\n\nStarting pybuildrun....\nrunning pipeline manually\n\n")
+    time.sleep(1)
+    run_pipeline(pipeline)
+    print("Done")
+
+def app_run():
+
+    trigger = get_trigger()
+    pipeline = trigger[1]
+
+    if trigger[0] == 'git':
+        git_trigger(pipeline)
+    elif trigger[0] == 'manual':
+        manual_pipeline(pipeline)
+    else:
+        print("pipeline error: select trigger in pipiline between 'manual' or 'git'")
+
+
 if __name__ == '__main__':
-    monitor_commit()
+    app_run()

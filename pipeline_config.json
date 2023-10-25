@@ -1,5 +1,5 @@
 {
-    "trigger": "git",
+    "trigger": "manual",
     "pipeline": {
         "run":{
             "step": "echo testt >> validate",

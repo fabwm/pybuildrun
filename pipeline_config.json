@@ -1,10 +1,10 @@
 {
-    "trigger": "manual",
+    "trigger": "git",
     "pipeline": {
         "run":{
-            "step": "echo testt >> validate",
+            "compi": "echo testt >> validate",
             "step2": "echo test2 >> validate",
-            "step3": "echo test3 >> validate"
+            "step3": "echo $(pwd) >> validate"
         }
     }
 }

@@ -13,10 +13,6 @@ script_init = "██████╗░██╗░░░██╗████�
 
 def git_trigger(json_pipeline):
 
-    #json_pipeline = get_json_pipeline()
-    #validate_pipeline(json_pipeline)
-
-
     try:
         git_repo = sys.argv[1]
     except:
@@ -53,7 +49,7 @@ def git_trigger(json_pipeline):
                     while(var_for_validation_inloop == 0):
                         if user_decision_to_continue_run_pipeline == 'y':
                             var_for_validation_inloop = 1
-                            print("\nrestarting pybuildrun...\nsearching for commits\n")
+                            print("\nRestarting pybuildrun...\nsearching for commits\n")
                             pass
                         elif user_decision_to_continue_run_pipeline == 'n':
                             print("exiting pybuildrun...")
@@ -64,10 +60,21 @@ def git_trigger(json_pipeline):
 
 def get_json_pipeline():
     
-    pipeline = os.popen("cat pipeline_config.json").read()
-    json_pipeline = json.loads(pipeline)
-    
-    return json_pipeline
+    try:
+        pipeline_path = sys.argv[2]
+    except:
+        print("pybuildrun pipeline error: no pipeline file passed...\nPlease select a valid pipeline file as a arg")
+        exit()
+    else:
+        pipeline = os.popen(f"cat {pipeline_path}").read()
+        try:
+            json.loads(pipeline)
+        except:
+            print("pybuildrun pipeline error: invalid file type passed...\nPlease select a valid pipeline file as a arg")
+            exit()
+        else:
+            json_pipeline = json.loads(pipeline)    
+            return json_pipeline
 
 def validate_pipeline(json_pipeline):
 
@@ -96,12 +103,12 @@ def run_pipeline(pipeline):
     commands = pipeline["pipeline"]["run"]
     for key in commands:
     
-        step_run = os.popen(f"{commands[key]} 2>> log.txt; echo $?").read()
+        step_run = os.popen(f"{commands[key]} 2>> log_pybuildrun.txt; echo $?").read()
         step_error = step_run.split()[-1]
         
         if step_error != "0":
             print(f"command {commands[key]} error with exit {step_error}\ncheck logfile to see the error")
-            os.popen(f'echo $(date)" >> log.txt')
+            os.popen(f'echo $(date)" >> log_pybuildrun.txt')
             return False
             break
         else:
@@ -118,7 +125,7 @@ def get_trigger():
 
     return trigger, pipeline
 
-def manual_pipeline(pipeline):
+def manual_trigger(pipeline):
     
     print("*******************************************************************************\n\n")
     print(script_init)
@@ -128,6 +135,10 @@ def manual_pipeline(pipeline):
     run_pipeline(pipeline)
     print("Done")
 
+# def select_pipeline():
+#     pipeline_path = sys.argv[2]
+#     get_pipeline
+
 def app_run():
 
     trigger = get_trigger()
@@ -136,10 +147,11 @@ def app_run():
     if trigger[0] == 'git':
         git_trigger(pipeline)
     elif trigger[0] == 'manual':
-        manual_pipeline(pipeline)
+        manual_trigger(pipeline)
     else:
         print("pipeline error: select trigger in pipiline between 'manual' or 'git'")
 
 
 if __name__ == '__main__':
     app_run()
+    #print(get_json_pipeline())

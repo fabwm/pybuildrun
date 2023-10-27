@@ -4,7 +4,8 @@ import time
 import json
 
 
-script_init = "██████╗░██╗░░░██╗██████╗░██╗░░░██╗██╗██╗░░░░░██████╗░██████╗░██╗░░░██╗███╗░░██╗\n\
+script_init ="\
+██████╗░██╗░░░██╗██████╗░██╗░░░██╗██╗██╗░░░░░██████╗░██████╗░██╗░░░██╗███╗░░██╗\n\
 ██╔══██╗╚██╗░██╔╝██╔══██╗██║░░░██║██║██║░░░░░██╔══██╗██╔══██╗██║░░░██║████╗░██║\n\
 ██████╔╝░╚████╔╝░██████╦╝██║░░░██║██║██║░░░░░██║░░██║██████╔╝██║░░░██║██╔██╗██║\n\
 ██╔═══╝░░░╚██╔╝░░██╔══██╗██║░░░██║██║██║░░░░░██║░░██║██╔══██╗██║░░░██║██║╚████║\n\
@@ -16,7 +17,7 @@ def git_trigger(json_pipeline):
     try:
         git_repo = sys.argv[1]
     except:
-        print("script call error...\npass the git repo directory as a arg to run the pipeline")
+        print("Script call error...\nPass the git repo directory as a arg to run the pipeline")
         exit()
     else:
         git_repo = sys.argv[1]
@@ -24,38 +25,38 @@ def git_trigger(json_pipeline):
         get_error = commit_file.split()[-1]
     
     if get_error == '1':
-        print(f"{commit_file}^exit code\ncheck log file to see the error...")
+        print(f"{commit_file}^Exit code\nCheck log file to see the error...")
     else:
         print("*******************************************************************************\n\n")
         print(script_init)
         print("\n\n*******************************************************************************")
-        print("\n\nStarting pybuildrun....\nsearching for commits\n\n")
+        print("\n\nStarting pybuildrun....\nWaiting for commits\n\n")
         while True:
             
             last_commit_file = os.popen(f"./get_git_hooks.sh {git_repo}; echo $?").read()
             if last_commit_file == commit_file:
                 pass
             else:
-                print("commit received...\nstarting pipeline...")
+                print("Commit received...\nStarting pipeline...")
                 pipeline_run_status = run_pipeline(json_pipeline)
                 commit_file = last_commit_file
                 if pipeline_run_status == False:
-                    print("pipeline error, one or more commands within key 'run:{}' are not working")
+                    print("Pipeline error, one or more commands within key 'run:{}' are not working")
                     exit()
                 else:
-                    print("pipeline succesfull run")
+                    print("Pipeline succesfull run\n")
                     var_for_validation_inloop = 0
                     user_decision_to_continue_run_pipeline = input("Would you like to continue listening to git commits? (y/n)\n")
                     while(var_for_validation_inloop == 0):
                         if user_decision_to_continue_run_pipeline == 'y':
                             var_for_validation_inloop = 1
-                            print("\nRestarting pybuildrun...\nsearching for commits\n")
+                            print("\nRestarting pybuildrun...\nWaiting for commits\n")
                             pass
                         elif user_decision_to_continue_run_pipeline == 'n':
-                            print("exiting pybuildrun...")
+                            print("\nExiting pybuildrun...")
                             exit()
                         else:
-                            print("not readable answer, please input 'y' or 'n' to continue pybuildrun.\n")
+                            print("Not readable answer, please input 'y' or 'n' to continue pybuildrun.\n")
                             pass
 
 def get_json_pipeline():
@@ -87,13 +88,13 @@ def validate_pipeline(json_pipeline):
                     if y == "run":
                         pass
                     else:
-                        print("invalid key value in pipeline, please erase all keys in pipeline that is not 'run'")
+                        print("Invalid key value in pipeline, please erase all keys in pipeline that is not 'run'")
                         exit()
             else:
                 print("No run key in pipeline, please input the run key and its steps")
                 exit()
         else:
-            print("invalid pipeline sintax, please describe trigger and pipeline only")
+            print("Invalid pipeline sintax, please describe trigger and pipeline only")
             exit()
     
     return json_pipeline
@@ -107,7 +108,7 @@ def run_pipeline(pipeline):
         step_error = step_run.split()[-1]
         
         if step_error != "0":
-            print(f"command {commands[key]} error with exit {step_error}\ncheck logfile to see the error")
+            print(f"Command {commands[key]} error with exit {step_error}\ncheck logfile to see the error")
             os.popen(f'echo $(date)" >> log_pybuildrun.txt')
             return False
             break
@@ -135,9 +136,6 @@ def manual_trigger(pipeline):
     run_pipeline(pipeline)
     print("Done")
 
-# def select_pipeline():
-#     pipeline_path = sys.argv[2]
-#     get_pipeline
 
 def app_run():
 
@@ -149,7 +147,7 @@ def app_run():
     elif trigger[0] == 'manual':
         manual_trigger(pipeline)
     else:
-        print("pipeline error: select trigger in pipiline between 'manual' or 'git'")
+        print("Pipeline error: select trigger in pipiline between 'manual' or 'git'")
 
 
 if __name__ == '__main__':

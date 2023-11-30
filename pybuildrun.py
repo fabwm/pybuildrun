@@ -15,12 +15,12 @@ script_init ="\
 def git_trigger(json_pipeline):
 
     try:
-        git_repo = sys.argv[1]
+        git_repo = sys.argv[2]
     except:
         print("Script call error...\nPass the git repo directory as a arg to run the pipeline")
         exit()
     else:
-        git_repo = sys.argv[1]
+        git_repo = sys.argv[2]
         commit_file = os.popen(f"./get_git_hooks.sh {git_repo}; echo $?").read()
         get_error = commit_file.split()[-1]
     
@@ -62,7 +62,7 @@ def git_trigger(json_pipeline):
 def get_json_pipeline():
     
     try:
-        pipeline_path = sys.argv[2]
+        pipeline_path = sys.argv[1]
     except:
         print("pybuildrun pipeline error: no pipeline file passed...\nPlease select a valid pipeline file as a arg")
         exit()
@@ -147,7 +147,7 @@ def app_run():
     elif trigger[0] == 'manual':
         manual_trigger(pipeline)
     else:
-        print("Pipeline error: select trigger in pipiline between 'manual' or 'git'")
+        print("Pipeline error: select trigger in pipeline between 'manual' or 'git'")
 
 
 if __name__ == '__main__':

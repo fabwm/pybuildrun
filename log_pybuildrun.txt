@@ -454,3 +454,6 @@ diretorio asdasd invalido - qui 26 out 2023 22:55:54 -03
 diretorio fsdfs invalido - qui 26 out 2023 22:55:58 -03
 Not a git repository - please input a git repo dir as a arg  - qui 26 out 2023 22:57:57 -03
 Not a git repository - please input a git repo dir as a arg  - qui 26 out 2023 23:07:41 -03
+Not a git repository - please input a git repo dir as a arg  - ter 31 out 2023 10:47:50 -03
+Not a git repository - please input a git repo dir as a arg  - ter 31 out 2023 10:48:55 -03
+diretorio dasdas invalido - qui 30 nov 2023 14:35:54 -03

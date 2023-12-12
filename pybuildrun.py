@@ -67,7 +67,8 @@ def get_json_pipeline():
         print("pybuildrun pipeline error: no pipeline file passed...\nPlease select a valid pipeline file as a arg")
         exit()
     else:
-        pipeline = os.popen(f"cat {pipeline_path}").read()
+        #pipeline = os.popen(f"cat {pipeline_path}").read()
+        pipeline = open(pipeline_path, "r").read()
         try:
             json.loads(pipeline)
         except:

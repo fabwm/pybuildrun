@@ -1,8 +1,7 @@
 {
-    "trigger": "git",
     "pipeline": {
         "run":{
-            "compi": "echo testt >> validate",
+            "compi": "cd ../",
             "step2": "echo test2 >> validate",
             "step3": "echo $(pwd) >> validate"
         }

@@ -4,7 +4,7 @@ import time
 import json
 
 
-script_init ="\
+script_init_msg ="\
 ██████╗░██╗░░░██╗██████╗░██╗░░░██╗██╗██╗░░░░░██████╗░██████╗░██╗░░░██╗███╗░░██╗\n\
 ██╔══██╗╚██╗░██╔╝██╔══██╗██║░░░██║██║██║░░░░░██╔══██╗██╔══██╗██║░░░██║████╗░██║\n\
 ██████╔╝░╚████╔╝░██████╦╝██║░░░██║██║██║░░░░░██║░░██║██████╔╝██║░░░██║██╔██╗██║\n\
@@ -126,17 +126,34 @@ def run_pipeline(pipeline):
 #     return trigger, pipeline
 
 def app_run():
-    
+
     json_pipeline = get_json_pipeline()
     pipeline = validate_pipeline(json_pipeline)
-    print("*******************************************************************************\n\n")
-    print(script_init)
-    print("\n\n*******************************************************************************")
-    print("\n\nStarting pybuildrun....\nrunning pipeline\n\n")
-    time.sleep(1)
-    run_pipeline(pipeline)
-    print("Done")
 
+    try:
+
+        sys.argv[2]
+    
+    except:
+        print("Directory to start pipeline not defined.\nPlease input the directory that you want \
+the pipeline to run from\nGive it as a second argument.")
+    else:
+        dir_to_run_pipeline = sys.argv[2]
+        
+        if os.path.exists(dir_to_run_pipeline):
+
+            os.chdir(dir_to_run_pipeline)
+            print("*******************************************************************************\n\n")
+            print(script_init_msg)
+            print("\n\n*******************************************************************************")
+            print("\n\nStarting pybuildrun....\nrunning pipeline\n\n")
+            time.sleep(1)
+            run_pipeline(pipeline)
+            print("Done")
+
+        else:
+
+            print("Error on directory selection...\nInvalid directory to run pipeline, please input a valid directory as an argument..")
 
 # def app_run():
 
@@ -152,6 +169,5 @@ def app_run():
 
 
 if __name__ == '__main__':
-    os.chdir('/home/fabiano')
     app_run()
-    #print(get_json_pipeline())
+    

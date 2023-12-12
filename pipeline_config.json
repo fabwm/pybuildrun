@@ -1,9 +1,10 @@
 {
     "pipeline": {
         "run":{
-            "compi": "cd ../",
+            "compi": "chmod 770 test.sh",
             "step2": "echo test2 >> validate",
-            "step3": "echo $(pwd) >> validate"
+            "step3": "./test.sh",
+            "step4": "echo $(pwd) >> validate"
         }
     }
 }
